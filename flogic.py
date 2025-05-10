@@ -1,3 +1,5 @@
+from typing import Dict
+
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
@@ -82,6 +84,80 @@ def evaluate_engine_health(oil_pressure: float,
 if __name__ == "__main__":
     result = evaluate_engine_health(oil_pressure=60,
                                     coolant_temp=90,
-                                    vibration_level=0)
+                                    vibration_level=1)
     print(f"Индекс здоровья: {result['health_index']:.1f}")
     print(f"Категория: {result['health_category']}")
+
+def a_random_three_pos_fl(name, inplings: Dict, mfs , rules):
+
+    gendata = {
+        'x': [0, 101, 1],
+        'y': [60, 121, 1],
+        'z': [0, 11, 1]
+               }
+    gendata = inplings
+    alpha = ctrl.Antecedent(np.arange(gendata['x'][0], gendata['x'][1], gendata['x'][2]), 'alpha_mode') # abstract: ctrl.Antecedent(np.arange({x1}, {x2}, {x3}), '{x_name}')
+    beta = ctrl.Antecedent(np.arange(gendata['y'][0], gendata['y'][1], gendata['y'][2]), 'beta_mode') # abstract: ctrl.Antecedent(np.arange({y1}, {y2}, {y3}), '{y_name}')
+    gamma = ctrl.Antecedent(np.arange(gendata['z'][0], gendata['z'][1], gendata['z'][2]), 'gamma_mode') # abstract: ctrl.Antecedent(np.arange({z1}, {z2}, {z3}), '{z_name}')
+
+    out = ctrl.Antecedent(np.arange(0, 101, 1), 'output_mode')
+
+    localmfs = {
+        'x':
+            {
+            'low': [0, 0, 30, 50],
+            'normal': [40, 60, 60, 80],
+            'high': [70, 90, 100, 100]
+             },
+        'y':
+            {
+                'low': [60, 60, 70, 80],
+                'normal': [75, 90, 90, 105],
+                'high': [100, 110, 120, 120]
+            },
+        'z':
+            {
+                'low': [0,2,2,4],
+                'normal': [3,5,5,7],
+                'high': [6,8,8,10]
+            }
+    }
+
+    alpha['low'] = fuzz.trapmf(alpha.universe, localmfs['x']['low']) # трапецеидальная функция принадлежности ... Тримф - треугольная abcd - начало подъема, начало плато, конец плато, конец спада
+    alpha['normal'] = fuzz.trapmf(alpha.universe, localmfs['x']['normal'])
+    alpha['high'] = fuzz.trapmf(alpha.universe, localmfs['x']['high'])
+
+    beta['low'] = fuzz.trapmf(beta.universe, localmfs['y']['low'])
+    beta['normal'] = fuzz.trapmf(beta.universe, localmfs['y']['normal'])
+    beta['high'] = fuzz.trapmf(beta.universe, localmfs['y']['high'])
+
+    gamma['low'] = fuzz.trapmf(gamma.universe, localmfs['y']['low'])
+    gamma['normal'] = fuzz.trapmf(gamma.universe, localmfs['y']['normal'])
+    gamma['high'] = fuzz.trapmf(gamma.universe, localmfs['y']['high'])
+
+    out['first'] = fuzz.trapmf(out.universe, [0,0,0,50])
+    out['second'] = fuzz.trapmf(out.universe, [30, 50, 50, 70])
+    out['third'] = fuzz.trapmf(out.universe, [50, 100, 100, 100])
+
+    ruledict = {
+        'alpha': ["alpha['low']", "alpha['normal']", "alpha['high']"],
+        'beta': ["beta['low']","beta['normal']","beta['high']"],
+        'gamma': ["gamma['low']", "gamma['normal']", "gamma['high']"],
+        'answer': ["out['first']", "out['second']", "out['third']"]
+        
+    }
+    rules = exec(f"""
+        [
+        ctrl.Rule({ruledict['alpha'][0]} or {ruledict['beta'][2]} or {ruledict['gamma'][2]}, {ruledict['answer'][0]} ),
+        
+        ctrl.Rule( {ruledict['alpha'][1]}  &  {ruledict['beta'][2]} ,  {ruledict['answer'][1]} ),
+        ctrl.Rule( {ruledict['alpha'][0]}  &  {ruledict['beta'][1]} ,  {ruledict['answer'][1]} ),
+        ctrl.Rule( {ruledict['gamma'][1]}  &  {ruledict['beta'][1]} , {ruledict['answer'][1]} ),
+        
+        ctrl.Rule( {ruledict['alpha'][1]}  &  {ruledict['beta'][1]}  &  {ruledict['gamma'][0]} ,  {ruledict['answer'][2]} )
+        ctrl.Rule( {ruledict['alpha'][2]}  &  {ruledict['beta'][1]}  &  {ruledict['gamma'][0]} ,
+                   {ruledict['answer'][2]} )
+
+    ]
+    """)
+
