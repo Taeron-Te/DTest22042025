@@ -17,9 +17,12 @@ class CoreCodeGenerator(QObject):
         # уведомление об изменении
         self.generated_code_changed.emit(self.generated_code)
 
-    def update_code(self, record_id: int, new_code: str):
-        for idx, (rid, nm, _) in enumerate(self.generated_code):
-            if rid == record_id:
-                self.generated_code[idx] = (rid, nm, new_code)
+    def update_code(self, record_id: int, new_value: str, field: str):
+        for index, (id_, name, code) in enumerate(self.generated_code):
+            if id_ == record_id:
+                if field == "name":
+                    self.generated_code[index] = (id_, new_value, code)
+                elif field == "code":
+                    self.generated_code[index] = (id_, name, new_value)
                 self.generated_code_changed.emit(self.generated_code)
                 break

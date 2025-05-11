@@ -12,7 +12,7 @@ class Code_generator:
 
 
     def __call__(self, *args, **kwargs):
-        self.primitive_generate(input("Text"), input("a"), input("o"), input("f"))
+        self.primitive_generate(input("Text"), input("q"), input("o"), input("f"))
 
     def _add(self, fn):
         Code_generator.code_was_gendered += 1
@@ -20,7 +20,7 @@ class Code_generator:
 
     def get_generated_files(self):
         print(self.generated_file_names)
-        for i,j in self.generated_file_names, range(len(self.generated_file_names)-1):
+        for j, i in enumerate(self.generated_file_names):
             print(j, i)
         return self.generated_file_names
 
@@ -32,21 +32,33 @@ class Code_generator:
                 tmp.append(i)
         return tmp
 
-    def primitive_generate(self, txt, a, o, linka='', linkb='', f=''):
+    def primitive_generate(self, txt, q, o, f='', linka='', linkb='' ):
         filename = f
         if filename == 'LAST' and Code_generator.generated_file_names != []:
             filename = Code_generator.generated_file_names.pop()
         if filename == '':
             filename = 'f' + str(self.__hash__())
+        generated = ""
         if linka == '':
             linka = "#"
+        else:
+            generated += f'''
+from generated.{linka} import {linka}
+
+'''
         if linkb == '':
             linkb = "#"
-        generated = f'''
+        else:
+            generated += f'''
+from generated.{linkb} import {linkb}
+
+        '''
+
+        generated += f'''
 def {filename}():
     print("{txt}")
     b = input()
-    if "{a}" {o} b:
+    if "{q}" {o} b:
         {linka}()
         return True
     else:
@@ -60,58 +72,26 @@ def {filename}():
         print(filename)
         return filename
 
-    def add_primitive(self, txt, a, o, f, linka='', linkb=''):
-        flag = False
-        filename = f
-        if filename == 'LAST' and Code_generator.generated_file_names != []:
-            filename = Code_generator.generated_file_names.pop()
-            print(filename)
-            flag = True
-        elif filename == '' or filename not in Code_generator.generated_file_names:
-            print("Файл с данным именем не существует")
-            self.primitive_generate(txt, a ,o, f)
-        if linka == '':
-            linka = "#"
-        if linkb == '':
-            linkb = "#"
-        generated = f'''
-def {filename}():
-    print("{txt}")
-    b = input()
-    if "{a}" {o} b:
-        {linka}()
-        return True
-    else:
-        {linkb}() 
-        return False
-    '''
-        with open(f"generated/{filename}.py", 'a', encoding='utf-8') as file:
-            file.write(generated)
-        if flag:
-            self._add(filename)
-        print("added to ", filename)
-        return filename
-
-    def match_generate(self, txt, a: list, o, lincs: list[str], deflinc: str, f=''):
+    def match_generate(self, txt, q: list,  lincs: list[str], deflinc: str, f=''):
         filename = f
         if filename == '':
             filename = 'm' + str(self.__hash__())
         generated = ''
-        if not isinstance(a, list):
-            print("IS NOT LIST", a)
-            self.primitive_generate(txt, a, o, filename)
+        if not isinstance(q, list):
+            print("IS NOT LIST", q)
+            self.primitive_generate(txt, q, "==", filename)
         if deflinc == '':
             deflinc = "#"
-        for i in a:
+        for i in q:
             pass
         else:
             generated = f'''
 def {filename}():
     print("{txt}")
-    b = input("{a}")
+    b = input("{q}")
     match b.split():
 '''
-            for i,j in a, lincs:
+            for i,j in q, lincs:
                 generated += f'''
                 
         case ["{i}"]:
@@ -140,34 +120,29 @@ def {filename}():
         f = filename
         if f == '':
             f = 'fl' + str(self.__hash__())
-        """
-        Генерирует Python-файл с определением экспертной системы на нечёткой логике.
-
-        Параметры:
-          - filename: путь к выходному .py файлу
-          - system_name: имя системы (будет использовано в имени функции)
-          - antecedents: словарь входных переменных вида:
-                {
-                  'var_name': {
-                      'range': [start, end, step],
-                      'terms': {
-                          'term_name': ['trimf' | 'trapmf', params_list],
-                          ...
-                      }
-                  },
-                  ...
-                }
-          - consequents: аналогично antecedents для выходных переменных
-          - rule_definitions: список определений правил вида:
-                [
-                  {
-                    'if': [('var', 'term'), ...],
-                    'logic': 'and' | 'or',
-                    'then': ('out_var', 'out_term')
-                  },
-                  ...
-                ]
-        """
+          # - filename: путь к выходному .py файлу
+          # - system_name: имя системы (будет использовано в имени функции)
+          # - antecedents: словарь входных переменных вида:
+          #       {
+          #         'var_name': {
+          #             'range': [start, end, step],
+          #             'terms': {
+          #                 'term_name': ['trimf' | 'trapmf', params_list],
+          #                 ...
+          #             }
+          #         },
+          #         ...
+          #       }
+          # - consequents: аналогично antecedents для выходных переменных
+          # - rule_definitions: список определений правил вида:
+          #       [
+          #         {
+          #           'if': [('var', 'term'), ...],
+          #           'logic': 'and' | 'or',
+          #           'then': ('out_var', 'out_term')
+          #         },
+          #         ...
+          #       ]
         # Заголовок файла
         lines = [
             "import numpy as np",
@@ -220,20 +195,10 @@ def {filename}():
         with open(filename, 'w', encoding='utf-8') as f:
             f.write("\n".join(lines))
 
-    def generated_code(self, f='', code=''):
-        filename = f
-        if filename == '':
-            filename = 'ag' + str(self.__hash__())
-        generated: str
-        if code == '':
-            generated = """
-print(f'AUTOGENERATED_CODE')"""
-        else: generated = code
+    def starter(self, filename:str, linka:str):
+        f = filename
+        if f == '':
+            f = "starter" + str(self.__hash__())
 
-        with open(f"generated/{filename}.py", 'w', encoding='utf-8') as file:
-            file.write(generated)
 
-        self._add(filename)
-        print(filename)
-        return filename
 
