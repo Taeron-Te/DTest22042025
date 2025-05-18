@@ -1,0 +1,399 @@
+{
+  "blocks": [
+    {
+      "type": "Starter",
+      "name": "Имя",
+      "id": "s_5ec434529a544618b6a578e63c9c294b",
+      "pos": [
+        -198.5,
+        139.35
+      ]
+    },
+    {
+      "type": "Binares",
+      "name": "Усл1",
+      "condition": "",
+      "id": "b_f43589c1516e41d9bf2fb58145e282a0",
+      "pos": [
+        39.049999999999955,
+        93.09999999999997
+      ]
+    },
+    {
+      "type": "Match",
+      "name": "Варианты",
+      "question": "Вопрос!",
+      "choices": [
+        "Вариант 1",
+        "Вариант 2",
+        "Вариант 3"
+      ],
+      "id": "m_2751d0797e26438e9eccf221c7536ae2",
+      "pos": [
+        440.4,
+        -103.54999999999994
+      ]
+    },
+    {
+      "type": "Fuzzy",
+      "name": "Нечеткая логика",
+      "question": "Чек двигла?",
+      "fuzzy_config": {
+        "antecedents": {
+          "Масло": {
+            "range": [
+              0.0,
+              100.0,
+              1.0
+            ],
+            "terms": {
+              "low": [
+                "trapmf",
+                [
+                  0.0,
+                  0.0,
+                  30.0,
+                  50.0
+                ]
+              ],
+              "normal": [
+                "trapmf",
+                [
+                  40.0,
+                  60.0,
+                  60.0,
+                  80.0
+                ]
+              ],
+              "high": [
+                "trapmf",
+                [
+                  70.0,
+                  90.0,
+                  100.0,
+                  100.0
+                ]
+              ]
+            },
+            "term_order": [
+              "low",
+              "normal",
+              "high"
+            ]
+          },
+          "hladogent": {
+            "range": [
+              0.0,
+              120.0,
+              1.0
+            ],
+            "terms": {
+              "low": [
+                "trapmf",
+                [
+                  0.0,
+                  0.0,
+                  70.0,
+                  80.0
+                ]
+              ],
+              "normal": [
+                "trapmf",
+                [
+                  75.0,
+                  90.0,
+                  90.0,
+                  105.0
+                ]
+              ],
+              "high": [
+                "trapmf",
+                [
+                  100.0,
+                  110.0,
+                  120.0,
+                  120.0
+                ]
+              ]
+            },
+            "term_order": [
+              "low",
+              "normal",
+              "high"
+            ]
+          },
+          "vibro": {
+            "range": [
+              0.0,
+              10.0,
+              1.0
+            ],
+            "terms": {
+              "low": [
+                "trapmf",
+                [
+                  0.0,
+                  0.0,
+                  2.0,
+                  4.0
+                ]
+              ],
+              "medium": [
+                "trapmf",
+                [
+                  3.0,
+                  5.0,
+                  5.0,
+                  7.0
+                ]
+              ],
+              "high": [
+                "trapmf",
+                [
+                  6.0,
+                  8.0,
+                  10.0,
+                  10.0
+                ]
+              ]
+            },
+            "term_order": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        },
+        "consequent": {
+          "Health": {
+            "range": [
+              0.0,
+              100.0,
+              1.0
+            ],
+            "terms": {
+              "CRIT": [
+                "trapmf",
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  50.0
+                ]
+              ],
+              "WARNING": [
+                "trapmf",
+                [
+                  30.0,
+                  50.0,
+                  50.0,
+                  70.0
+                ]
+              ],
+              "Good": [
+                "trapmf",
+                [
+                  50.0,
+                  100.0,
+                  100.0,
+                  100.0
+                ]
+              ]
+            },
+            "term_order": [
+              "CRIT",
+              "WARNING",
+              "Good"
+            ]
+          }
+        },
+        "rule_definitions": [
+          {
+            "if": [
+              [
+                "Масло",
+                "low"
+              ],
+              [
+                "hladogent",
+                "high"
+              ],
+              [
+                "vibro",
+                "high"
+              ]
+            ],
+            "logic": "AND",
+            "then": [
+              "Health",
+              "CRIT"
+            ]
+          },
+          {
+            "if": [
+              [
+                "Масло",
+                "low"
+              ],
+              [
+                "hladogent",
+                "high"
+              ],
+              [
+                "vibro",
+                "medium"
+              ]
+            ],
+            "logic": "AND",
+            "then": [
+              "Health",
+              "WARNING"
+            ]
+          },
+          {
+            "if": [
+              [
+                "Масло",
+                "normal"
+              ],
+              [
+                "hladogent",
+                "normal"
+              ],
+              [
+                "vibro",
+                "low"
+              ]
+            ],
+            "logic": "AND",
+            "then": [
+              "Health",
+              "Good"
+            ]
+          }
+        ]
+      },
+      "id": "f_53377d86da564aa19e44ddb0d538b90c",
+      "pos": [
+        412.7999999999999,
+        221.89999999999998
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "в1",
+      "verdict": "Вариант 1",
+      "id": "e_08c7d3c9eeed4764b3dae4760582309d",
+      "pos": [
+        754.3499999999997,
+        -134.59999999999994
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "в2",
+      "verdict": "Вар2",
+      "id": "e_46f8b840eb374e97a192949eb23d44b9",
+      "pos": [
+        763.5499999999998,
+        -44.89999999999996
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "в3",
+      "verdict": "Вар3",
+      "id": "e_0bbcc1e82a3d48d8b11826788152913c",
+      "pos": [
+        789.9999999999999,
+        37.90000000000004
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "Крит",
+      "verdict": "Крит",
+      "id": "e_12d3bf0463b445cfb92bbe306c2a458d",
+      "pos": [
+        726.7499999999997,
+        118.4
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "варн",
+      "verdict": "варн",
+      "id": "e_900b67c30c234623b1487f333075135c",
+      "pos": [
+        775.0500000000001,
+        205.79999999999993
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "хор",
+      "verdict": "хор",
+      "id": "e_17ce5d06b81c4126894c80850dadb30b",
+      "pos": [
+        799.1999999999997,
+        297.7999999999999
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "s_5ec434529a544618b6a578e63c9c294b",
+      "to": "b_f43589c1516e41d9bf2fb58145e282a0",
+      "out_idx": 0,
+      "in_idx": 0
+    },
+    {
+      "from": "b_f43589c1516e41d9bf2fb58145e282a0",
+      "to": "m_2751d0797e26438e9eccf221c7536ae2",
+      "out_idx": 0,
+      "in_idx": 0
+    },
+    {
+      "from": "b_f43589c1516e41d9bf2fb58145e282a0",
+      "to": "f_53377d86da564aa19e44ddb0d538b90c",
+      "out_idx": 1,
+      "in_idx": 0
+    },
+    {
+      "from": "f_53377d86da564aa19e44ddb0d538b90c",
+      "to": "e_12d3bf0463b445cfb92bbe306c2a458d",
+      "out_idx": 0,
+      "in_idx": 0
+    },
+    {
+      "from": "f_53377d86da564aa19e44ddb0d538b90c",
+      "to": "e_900b67c30c234623b1487f333075135c",
+      "out_idx": 1,
+      "in_idx": 0
+    },
+    {
+      "from": "f_53377d86da564aa19e44ddb0d538b90c",
+      "to": "e_17ce5d06b81c4126894c80850dadb30b",
+      "out_idx": 2,
+      "in_idx": 0
+    },
+    {
+      "from": "m_2751d0797e26438e9eccf221c7536ae2",
+      "to": "e_08c7d3c9eeed4764b3dae4760582309d",
+      "out_idx": 0,
+      "in_idx": 0
+    },
+    {
+      "from": "m_2751d0797e26438e9eccf221c7536ae2",
+      "to": "e_46f8b840eb374e97a192949eb23d44b9",
+      "out_idx": 1,
+      "in_idx": 0
+    },
+    {
+      "from": "m_2751d0797e26438e9eccf221c7536ae2",
+      "to": "e_0bbcc1e82a3d48d8b11826788152913c",
+      "out_idx": 2,
+      "in_idx": 0
+    }
+  ]
+}

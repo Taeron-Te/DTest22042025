@@ -1,0 +1,63 @@
+{
+  "blocks": [
+    {
+      "type": "Ender",
+      "name": "Финальный    2",
+      "verdict": "Все хорошо",
+      "id": "e_ec0973c9fcb24d3087aa315e22638c09",
+      "pos": [
+        655.0,
+        121.0
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "Финальный    ",
+      "verdict": "Оденься",
+      "id": "e_efb7d61f28d4404ea433d57e01079643",
+      "pos": [
+        666.0,
+        -14.0
+      ]
+    },
+    {
+      "type": "Binares",
+      "name": "Бинарый",
+      "condition": "Тебе холодно?",
+      "id": "b_a0422b4fcd354e88934a8edd66a5753d",
+      "pos": [
+        366.0,
+        83.0
+      ]
+    },
+    {
+      "type": "Starter",
+      "name": "Стартовый",
+      "id": "s_65360cbbc7704eb98add8af10a3adca9",
+      "pos": [
+        100.0,
+        100.0
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "b_a0422b4fcd354e88934a8edd66a5753d",
+      "to": "e_ec0973c9fcb24d3087aa315e22638c09",
+      "out_idx": 1,
+      "in_idx": 0
+    },
+    {
+      "from": "b_a0422b4fcd354e88934a8edd66a5753d",
+      "to": "e_efb7d61f28d4404ea433d57e01079643",
+      "out_idx": 0,
+      "in_idx": 0
+    },
+    {
+      "from": "s_65360cbbc7704eb98add8af10a3adca9",
+      "to": "b_a0422b4fcd354e88934a8edd66a5753d",
+      "out_idx": 0,
+      "in_idx": 0
+    }
+  ]
+}

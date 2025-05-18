@@ -1,0 +1,133 @@
+{
+  "blocks": [
+    {
+      "type": "Ender",
+      "name": "в4",
+      "verdict": "Вар 4",
+      "id": "e_69f56c59fb624aaebd7d62efefc01797",
+      "pos": [
+        773.8999999999997,
+        328.8499999999999
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "в3",
+      "verdict": "Вар3",
+      "id": "e_72a303d1d7eb4ccbbdf905069fb374cc",
+      "pos": [
+        748.6000000000001,
+        292.0499999999998
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "в2",
+      "verdict": "Вар 2",
+      "id": "e_363ac1e06b22488985c4cca7b8215687",
+      "pos": [
+        723.3000000000001,
+        246.04999999999995
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "в1",
+      "verdict": "Вариант 1",
+      "id": "e_a14f3977c34242b5add61d62d0c78b40",
+      "pos": [
+        705.95,
+        201.14999999999998
+      ]
+    },
+    {
+      "type": "Match",
+      "name": "Блок выбора",
+      "question": "1-2-3-4",
+      "choices": [
+        "Вариант 1",
+        "Вариант 2",
+        "Вариант 3",
+        "Вариант 4"
+      ],
+      "id": "m_0484f198fb9540dfa4b78c204a2b0cd2",
+      "pos": [
+        472.55000000000007,
+        189.89999999999998
+      ]
+    },
+    {
+      "type": "Starter",
+      "name": "Стартер",
+      "id": "s_ad8aac5ded6949a09c550c6ca17ea3f2",
+      "pos": [
+        -102.0,
+        106.0
+      ]
+    },
+    {
+      "type": "Binares",
+      "name": "Бинарный блок",
+      "condition": "Холодно?",
+      "id": "b_abcd286f8b0d42f5b51a3b5336c758ca",
+      "pos": [
+        156.0,
+        97.0
+      ]
+    },
+    {
+      "type": "Ender",
+      "name": "Завершающий блок",
+      "verdict": "ДА-",
+      "id": "e_dc77c51bfd7f4c3898eae5a2c53d5720",
+      "pos": [
+        458.0,
+        1.0
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "m_0484f198fb9540dfa4b78c204a2b0cd2",
+      "to": "e_69f56c59fb624aaebd7d62efefc01797",
+      "out_idx": 3,
+      "in_idx": 0
+    },
+    {
+      "from": "m_0484f198fb9540dfa4b78c204a2b0cd2",
+      "to": "e_72a303d1d7eb4ccbbdf905069fb374cc",
+      "out_idx": 2,
+      "in_idx": 0
+    },
+    {
+      "from": "m_0484f198fb9540dfa4b78c204a2b0cd2",
+      "to": "e_363ac1e06b22488985c4cca7b8215687",
+      "out_idx": 1,
+      "in_idx": 0
+    },
+    {
+      "from": "m_0484f198fb9540dfa4b78c204a2b0cd2",
+      "to": "e_a14f3977c34242b5add61d62d0c78b40",
+      "out_idx": 0,
+      "in_idx": 0
+    },
+    {
+      "from": "b_abcd286f8b0d42f5b51a3b5336c758ca",
+      "to": "m_0484f198fb9540dfa4b78c204a2b0cd2",
+      "out_idx": 1,
+      "in_idx": 0
+    },
+    {
+      "from": "s_ad8aac5ded6949a09c550c6ca17ea3f2",
+      "to": "b_abcd286f8b0d42f5b51a3b5336c758ca",
+      "out_idx": 0,
+      "in_idx": 0
+    },
+    {
+      "from": "b_abcd286f8b0d42f5b51a3b5336c758ca",
+      "to": "e_dc77c51bfd7f4c3898eae5a2c53d5720",
+      "out_idx": 0,
+      "in_idx": 0
+    }
+  ]
+}
