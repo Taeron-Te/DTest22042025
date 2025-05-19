@@ -22,7 +22,7 @@ BLOCK_TYPES = [
     ("Starter", "Стартовый блок"),
     ("Binares", "Бинарный блок"),
     ("Match", "Блок выбора"),
-    ("Fuzzy", "Fuzzy logic block"),
+    ("Fuzzy", "Блок нечеткой логики"),
     ("Ender", "Финальный блок")
 ]
 
@@ -296,7 +296,7 @@ class BlockItem(QGraphicsRectItem):
             if not self.config_btn:
                 self.config_btn_widget = QPushButton("⚙")
                 self.config_btn_widget.setFixedSize(28, 28)
-                self.config_btn_widget.setToolTip("Настроить Fuzzy logic блок")
+                self.config_btn_widget.setToolTip("Настроить блок нечеткой логики")
                 self.config_btn_widget.clicked.connect(self.open_fuzzy_config)
                 self.config_btn = QGraphicsProxyWidget(self)
                 self.config_btn.setWidget(self.config_btn_widget)
@@ -804,7 +804,7 @@ class SchemeScene(QGraphicsScene):
     def ensureVisibleRect(self, item_rect: QRectF):
         scene_rect = self.sceneRect()
         new_rect = QRectF(scene_rect)
-        print(f"[DEBUG] ensureVisibleRect: scene={scene_rect}, item={item_rect}")
+
 
 
         if (item_rect.left() - scene_rect.left()) < self.EXPAND_MARGIN:
@@ -817,7 +817,7 @@ class SchemeScene(QGraphicsScene):
             new_rect.setBottom(scene_rect.bottom() + self.EXPAND_STEP)
 
         if new_rect != scene_rect:
-            print(f"[DEBUG] expanding sceneRect to {new_rect}")
+
             self.setSceneRect(new_rect)
 
     def removeItem(self, item):
@@ -982,11 +982,11 @@ class SchemeEditor(QGraphicsView):
         if change in (
                 QGraphicsItem.ItemPositionChange,
                 QGraphicsItem.ItemPositionHasChanged,
-                # … другие типы …
+
         ):
             # вычисляем rect_in_scene
             rect_in_scene = self.mapToScene(self.rect()).boundingRect()
-            print(f"[DEBUG] itemChange: change={change}, value={value}, rect_in_scene={rect_in_scene}")  # <—
+
             scene = self.scene()
             if isinstance(scene, SchemeScene):
                 scene.ensureVisibleRect(rect_in_scene)
@@ -1302,9 +1302,10 @@ class MainWindow(QMainWindow):
             self.show_block_settings(self.current_block)
 
     def save_scheme(self, f='') -> str:
+        print(f"save_scheme === [{f}]")
         from PySide6.QtWidgets import QFileDialog
         filename = f
-        if filename == '':
+        if filename == False:
             filename, _ = QFileDialog.getSaveFileName(self, "Сохранить схему", "", "JSON Files (*.json)")
         if filename:
             self.export_scheme(filename)
@@ -1411,9 +1412,9 @@ class MainWindow(QMainWindow):
 
 
 class FuzzyConfigDialog(QDialog):
-    def __init__(self, initial_fuzzy_config_data=None, block_display_title="Fuzzy Block", parent=None):
+    def __init__(self, initial_fuzzy_config_data=None, block_display_title="Блок нечеткой логики", parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Fuzzy logic block")
+        self.setWindowTitle("Настройки блока нечеткой логики")
         self.setMinimumWidth(800);
         self.setMinimumHeight(700)
         self.config_data = initial_fuzzy_config_data if initial_fuzzy_config_data is not None else {}

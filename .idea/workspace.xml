@@ -5,33 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fe3d1eb7-089c-4eb0-8b14-9e9407d736c0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/DTest22042025.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DTest22042025.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/code_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/code_generator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dto/Operands.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/flogic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generated/f153939966999.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generated/m153939966999.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/edge.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/node.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/resourses/style.qss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/scene.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/view.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/qt/core_code_generator.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/qt/dialogs/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/qt/dialogs/code_dialog.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/qt/dialogs/custom_dialog.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/qt/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/qt/ui/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/qt/ui/main_window.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Design.py" beforeDir="false" afterPath="$PROJECT_DIR$/Design.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +30,8 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
   <component name="RunManager" selected="Python.Design">
