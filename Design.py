@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QIcon, QPainter, QPen, QColor, QPainterPath, QFontMetricsF, QFont, QDoubleValidator, \
     QTextOption
-from PySide6.QtCore import Qt, QRectF, QPointF, QTimer, QLocale
+from PySide6.QtCore import Qt, QRectF, QPointF, QTimer, QLocale, QSizeF
 import sys
 from functools import partial
 import json
@@ -28,7 +28,8 @@ BLOCK_TYPES = [
 
 PORT_RADIUS = 14
 PORT_OFFSET = 5
-
+EXPAND_MARGIN = 100
+EXPAND_STEP   = 300
 
 class BlockCreateDialog(QDialog):
     def __init__(self, parent=None, starter_exists=False, ender_exists=False):
@@ -951,7 +952,7 @@ class SchemeEditor(QGraphicsView):
         self.scene = SchemeScene(on_block_selected=on_block_selected)
         self.setScene(self.scene)
         self.setRenderHint(QPainter.Antialiasing)
-        self.setSceneRect(QRectF(0, 0, 800, 600))
+        self.setSceneRect(QRectF(-1000, -1000, 2000, 2000))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setDragMode(QGraphicsView.RubberBandDrag)
@@ -966,6 +967,44 @@ class SchemeEditor(QGraphicsView):
         self.add_block_btn.clicked.connect(self.handle_add_block)
         self.selected_block = None
         self._scale = 1.0
+
+    def ensureVisibleRect(self, item_rect: QRectF):
+        """
+        Если item_rect приближается к любой границе sceneRect
+        ближе, чем EXPAND_MARGIN, расширяем sceneRect на EXPAND_STEP.
+        """
+        scene_rect = self.sceneRect()
+        new_rect = QRectF(scene_rect)  # копия
+
+        # слева
+        if (item_rect.left() - scene_rect.left()) < EXPAND_MARGIN:
+            new_rect.setLeft(scene_rect.left() - EXPAND_STEP)
+        # справа
+        if (scene_rect.right() - item_rect.right()) < EXPAND_MARGIN:
+            new_rect.setRight(scene_rect.right() + EXPAND_STEP)
+        # сверху
+        if (item_rect.top() - scene_rect.top()) < EXPAND_MARGIN:
+            new_rect.setTop(scene_rect.top() - EXPAND_STEP)
+        # снизу
+        if (scene_rect.bottom() - item_rect.bottom()) < EXPAND_MARGIN:
+            new_rect.setBottom(scene_rect.bottom() + EXPAND_STEP)
+
+        if new_rect != scene_rect:
+            self.setSceneRect(new_rect)
+
+
+    def itemChange(self, change, value):
+        # Отслеживаем именно изменение позиции до его подтверждения
+        if change == QGraphicsRectItem.ItemPositionChange:
+            new_pos: QPointF = value
+            # Новый прямоугольник в координатах сцены
+            new_rect = QRectF(
+                new_pos,
+                QSizeF(self.rect().width(), self.rect().height())
+            )
+            # Проверяем и, при необходимости, расширяем сцену
+            self.scene_ref.ensureVisibleRect(new_rect)
+        return super().itemChange(change, value)
 
 
     def wheelEvent(self, event):
