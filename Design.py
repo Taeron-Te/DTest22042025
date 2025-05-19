@@ -28,8 +28,7 @@ BLOCK_TYPES = [
 
 PORT_RADIUS = 14
 PORT_OFFSET = 5
-EXPAND_MARGIN = 100
-EXPAND_STEP   = 300
+
 
 class BlockCreateDialog(QDialog):
     def __init__(self, parent=None, starter_exists=False, ender_exists=False):
@@ -268,6 +267,29 @@ class BlockItem(QGraphicsRectItem):
         self.add_configure_button_if_needed()
         self.update_label()
         self.setPos(pos)
+
+    def itemChange(self, change, value):
+        # Обновляем связи
+        if change in (
+                QGraphicsItem.ItemPositionChange,
+                QGraphicsItem.ItemPositionHasChanged,
+                QGraphicsItem.ItemTransformChange,
+                QGraphicsItem.ItemTransformHasChanged,
+                QGraphicsItem.ItemScaleChange,
+                QGraphicsItem.ItemScaleHasChanged
+        ):
+            for port in getattr(self, 'ports_in', []) + getattr(self, 'ports_out', []):
+                for conn in getattr(port, 'connections', []):
+                    conn.update_path()
+
+            # Авто‑расширение сцены
+            scene = self.scene()
+            if isinstance(scene, SchemeScene):
+                # Получаем прямоугольник блока в координатах сцены
+                rect_in_scene = self.mapToScene(self.rect()).boundingRect()
+                scene.ensureVisibleRect(rect_in_scene)
+
+        return super().itemChange(change, value)
 
     def add_configure_button_if_needed(self):
         if self.block_data.get("type") == "Fuzzy":
@@ -740,45 +762,12 @@ class BlockItem(QGraphicsRectItem):
         if hasattr(scene, 'block_selected'):
             scene.block_selected(self)
 
-    def itemChange(self, change, value):
-        # Обновлять только соединения при перемещении или изменении размера блока
-        if change in (
-                QGraphicsItem.ItemPositionChange,
-                QGraphicsItem.ItemPositionHasChanged,
-                QGraphicsItem.ItemTransformChange,
-                QGraphicsItem.ItemTransformHasChanged,
-                QGraphicsItem.ItemScaleChange,
-                QGraphicsItem.ItemScaleHasChanged
-        ):
-            for port in getattr(self, 'ports_in', []) + getattr(self, 'ports_out', []):
-                for conn in getattr(port, 'connections', []):
-                    conn.update_path()
-            # Автоматическое расширение сцены, если она находится вблизи края
-            scene = self.scene()
-            if scene:
-                margin = 100
-                rect = scene.sceneRect()
-                pos = self.pos()
-                w, h = self.rect().width(), self.rect().height()
-                changed = False
-                if pos.x() + w + margin > rect.right():
-                    rect.setRight(pos.x() + w + margin)
-                    changed = True
-                if pos.y() + h + margin > rect.bottom():
-                    rect.setBottom(pos.y() + h + margin)
-                    changed = True
-                if pos.x() - margin < rect.left():
-                    rect.setLeft(pos.x() - margin)
-                    changed = True
-                if pos.y() - margin < rect.top():
-                    rect.setTop(pos.y() - margin)
-                    changed = True
-                if changed:
-                    scene.setSceneRect(rect)
-        return super().itemChange(change, value)
+
 
 
 class SchemeScene(QGraphicsScene):
+    EXPAND_MARGIN = 100
+    EXPAND_STEP = 300
     def __init__(self, on_block_selected=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.on_block_selected = on_block_selected
@@ -786,6 +775,7 @@ class SchemeScene(QGraphicsScene):
         self.temp_connection = None
         self.connections = []  # Все ConnectionItem
         self.blocks = {}  # id -> BlockItem
+
 
     def addItem(self, item):
         super().addItem(item)
@@ -810,6 +800,25 @@ class SchemeScene(QGraphicsScene):
             self.blocks[block_id] = item
         elif isinstance(item, ConnectionItem):
             self.connections.append(item)
+
+    def ensureVisibleRect(self, item_rect: QRectF):
+        scene_rect = self.sceneRect()
+        new_rect = QRectF(scene_rect)
+        print(f"[DEBUG] ensureVisibleRect: scene={scene_rect}, item={item_rect}")
+
+
+        if (item_rect.left() - scene_rect.left()) < self.EXPAND_MARGIN:
+            new_rect.setLeft(scene_rect.left() - self.EXPAND_STEP)
+        if (scene_rect.right() - item_rect.right()) < self.EXPAND_MARGIN:
+            new_rect.setRight(scene_rect.right() + self.EXPAND_STEP)
+        if (item_rect.top() - scene_rect.top()) < self.EXPAND_MARGIN:
+            new_rect.setTop(scene_rect.top() - self.EXPAND_STEP)
+        if (scene_rect.bottom() - item_rect.bottom()) < self.EXPAND_MARGIN:
+            new_rect.setBottom(scene_rect.bottom() + self.EXPAND_STEP)
+
+        if new_rect != scene_rect:
+            print(f"[DEBUG] expanding sceneRect to {new_rect}")
+            self.setSceneRect(new_rect)
 
     def removeItem(self, item):
         super().removeItem(item)
@@ -951,8 +960,9 @@ class SchemeEditor(QGraphicsView):
         super().__init__(parent)
         self.scene = SchemeScene(on_block_selected=on_block_selected)
         self.setScene(self.scene)
+        # Инициализируем sceneRect **на сцене**, а не во вьюшке:
+        self.scene.setSceneRect(QRectF(-1000, -1000, 2000, 2000))
         self.setRenderHint(QPainter.Antialiasing)
-        self.setSceneRect(QRectF(-1000, -1000, 2000, 2000))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setDragMode(QGraphicsView.RubberBandDrag)
@@ -968,42 +978,18 @@ class SchemeEditor(QGraphicsView):
         self.selected_block = None
         self._scale = 1.0
 
-    def ensureVisibleRect(self, item_rect: QRectF):
-        """
-        Если item_rect приближается к любой границе sceneRect
-        ближе, чем EXPAND_MARGIN, расширяем sceneRect на EXPAND_STEP.
-        """
-        scene_rect = self.sceneRect()
-        new_rect = QRectF(scene_rect)  # копия
-
-        # слева
-        if (item_rect.left() - scene_rect.left()) < EXPAND_MARGIN:
-            new_rect.setLeft(scene_rect.left() - EXPAND_STEP)
-        # справа
-        if (scene_rect.right() - item_rect.right()) < EXPAND_MARGIN:
-            new_rect.setRight(scene_rect.right() + EXPAND_STEP)
-        # сверху
-        if (item_rect.top() - scene_rect.top()) < EXPAND_MARGIN:
-            new_rect.setTop(scene_rect.top() - EXPAND_STEP)
-        # снизу
-        if (scene_rect.bottom() - item_rect.bottom()) < EXPAND_MARGIN:
-            new_rect.setBottom(scene_rect.bottom() + EXPAND_STEP)
-
-        if new_rect != scene_rect:
-            self.setSceneRect(new_rect)
-
-
     def itemChange(self, change, value):
-        # Отслеживаем именно изменение позиции до его подтверждения
-        if change == QGraphicsRectItem.ItemPositionChange:
-            new_pos: QPointF = value
-            # Новый прямоугольник в координатах сцены
-            new_rect = QRectF(
-                new_pos,
-                QSizeF(self.rect().width(), self.rect().height())
-            )
-            # Проверяем и, при необходимости, расширяем сцену
-            self.scene_ref.ensureVisibleRect(new_rect)
+        if change in (
+                QGraphicsItem.ItemPositionChange,
+                QGraphicsItem.ItemPositionHasChanged,
+                # … другие типы …
+        ):
+            # вычисляем rect_in_scene
+            rect_in_scene = self.mapToScene(self.rect()).boundingRect()
+            print(f"[DEBUG] itemChange: change={change}, value={value}, rect_in_scene={rect_in_scene}")  # <—
+            scene = self.scene()
+            if isinstance(scene, SchemeScene):
+                scene.ensureVisibleRect(rect_in_scene)
         return super().itemChange(change, value)
 
 
