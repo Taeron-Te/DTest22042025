@@ -20,12 +20,7 @@ def reader(filename:str):
 
 def creater(bff:dict, bc:dict):
     c = Code_generator()
-    # li : list
     for i in bff:
-        # if i['type'] == 'Match' or i['type'] == 'Fuzzy':
-        #     li = bc[i['id']]
-        #     li.reverse()
-        # pass
         match i['type']:
             case 'Starter':
                 c.starter_generate(i['id'], bc[i['id']][0] ) #i['question']
