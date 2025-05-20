@@ -6,7 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="fe3d1eb7-089c-4eb0-8b14-9e9407d736c0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/parser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Design.py" beforeDir="false" afterPath="$PROJECT_DIR$/Appliaction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code_generator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/parser.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/totrash_flogic.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,8 +38,8 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.Design">
-    <configuration name="Design" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.Appliaction">
+    <configuration name="Appliaction" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="DTest22042025" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -47,7 +51,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Design.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\SKuzm\OneDrive\Desktop\DTest22042025\Appliaction.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -142,7 +146,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Design" />
+        <item itemvalue="Python.Appliaction" />
         <item itemvalue="Python.s_5ec434529a544618b6a578e63c9c294b" />
         <item itemvalue="Python.f_53377d86da564aa19e44ddb0d538b90c" />
         <item itemvalue="Python.totrash_flogic" />
