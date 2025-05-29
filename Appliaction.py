@@ -203,7 +203,7 @@ class PortItem(QGraphicsEllipseItem):
 
             label_check_rect = QRectF(lx, ly, label_rect.width(), label_rect.height())
             port_circle_rect = QRectF(0, 0, PORT_RADIUS, PORT_RADIUS)
-
+            print('lx: ', lx, 'ly: ', ly, 'label_rect.width: ', label_rect.width(), 'label_rect.height: ', label_rect.height())
             if label_check_rect.intersects(port_circle_rect):
                 ly = PORT_RADIUS + 2
 
@@ -236,7 +236,7 @@ class BlockItem(QGraphicsRectItem):
             QGraphicsRectItem.ItemIsMovable | QGraphicsRectItem.ItemIsSelectable | QGraphicsRectItem.ItemSendsGeometryChanges)
         self.setBrush(QColor('#8C8C8C'))
         self.setPen(QPen(Qt.black, 2))
-
+        self._max_title_section_width = 0
         # Make a deep copy of the entire block_data to ensure full isolation
         # This is crucial for fuzzy_config to be correctly isolated when loaded from JSON
         self.block_data = copy.deepcopy(block_data)
@@ -257,6 +257,8 @@ class BlockItem(QGraphicsRectItem):
         self.type_item.setZValue(3)
         self.title_item = QGraphicsTextItem(self.get_title(), self)
         self.title_item.setParentItem(self)
+        # Отключаем перенос строк — текст всегда занимает ровно одну строку
+        self.title_item.setTextWidth(-1)
         self.title_item.setPos(25, 8)
         self.title_item.setDefaultTextColor(Qt.black)
         self.title_item.setZValue(3)
@@ -267,6 +269,7 @@ class BlockItem(QGraphicsRectItem):
         self.add_configure_button_if_needed()
         self.update_label()
         self.setPos(pos)
+
 
     def itemChange(self, change, value):
         # Обновляем связи
@@ -348,7 +351,7 @@ class BlockItem(QGraphicsRectItem):
         try:
             margin = 20
             min_width = 180  # Increased minimum width for better division
-            min_height = 60
+            min_height = 80
             default_starter_width = 200  # Increased default width
             current_rect = self.rect()
             title_x_pos = margin // 2
@@ -362,8 +365,11 @@ class BlockItem(QGraphicsRectItem):
                 for line in lines:
                     natural_title_width = max(natural_title_width, font_metrics.horizontalAdvance(line))
 
+
             # Ensure block is wide enough for both title and ports
-            title_section_width = max(min_width / 2, natural_title_width + margin)
+            required = max(min_width / 2, natural_title_width + margin)
+            self._max_title_section_width = max(self._max_title_section_width, required)
+            title_section_width = self._max_title_section_width
 
             # Calculate max label width for ports
             max_port_label_width = 0
@@ -379,7 +385,8 @@ class BlockItem(QGraphicsRectItem):
             block_width = max(block_width, min_width, default_starter_width)
 
             # Set title width to ensure it stays in left half
-            self.title_item.setTextWidth(title_section_width - margin)
+
+
             self.title_item.setPlainText(title_text)
             self.title_item.setPos(title_x_pos, 8)
 
@@ -394,7 +401,9 @@ class BlockItem(QGraphicsRectItem):
             # Calculate height
             title_bottom = self.title_item.pos().y() + self.title_item.boundingRect().height()
             type_bottom = self.type_item.pos().y() + self.type_item.boundingRect().height()
-            header_bottom = max(title_bottom, type_bottom) + margin / 2
+
+            header_bottom = min(title_bottom, type_bottom)
+
 
             # Add config button if needed
             self.add_configure_button_if_needed()
@@ -417,24 +426,39 @@ class BlockItem(QGraphicsRectItem):
 
                 block_height = max(header_bottom + margin / 2, max_port_bottom + margin / 2, min_height)
             else:
-                # Position ports for other block types
-                self.reposition_ports(midpoint)
+
 
                 # Calculate height
                 max_port_bottom = 0
-                for port in self.ports_in + self.ports_out:
+                print('port.pos().y()', port.pos().y())
+                for port in self.ports_out:
                     port_bottom = port.pos().y() + PORT_RADIUS
                     if hasattr(port, 'label') and port.label:
                         label_bottom = port.pos().y() + port.label.pos().y() + port.label.boundingRect().height()
                         port_bottom = max(port_bottom, label_bottom)
+                        print('max_port_bottom', port_bottom)
+                        print('max_port_bottom', label_bottom)
                     max_port_bottom = max(max_port_bottom, port_bottom)
+                    print('max_port_bottom', max_port_bottom)
 
-                block_height = max(header_bottom + margin / 2, max_port_bottom + margin / 2, min_height)
+                block_height = max(header_bottom + margin / 2, (max_port_bottom + margin / 2), min_height)
+
+
 
             # Update block geometry if dimensions changed
+            # Текущий размер
+            current_rect = self.rect()
+            current_w = current_rect.width()
+            current_h = current_rect.height()
+
+            # Новый, рассчитанный
+            new_w = block_width
+            new_h = block_height
+            print(f"DEBUG sizing: current_h={current_h}, new_h={new_h}")
+            # Если есть хоть какое-то отличие — увеличиваем или уменьшаем:
             if abs(current_rect.width() - block_width) > 1 or abs(current_rect.height() - block_height) > 1:
                 self.prepareGeometryChange()
-                self.setRect(QRectF(0, 0, block_width, block_height))
+                self.setRect(QRectF(0, 0, new_w, new_h))
 
                 # Reposition ports after size change
                 if t == "Match":
@@ -457,7 +481,7 @@ class BlockItem(QGraphicsRectItem):
 
         # If midpoint is not provided, use default block middle
         if midpoint is None:
-            midpoint = rect.width() / 2
+            midpoint = rect.height() / 2
 
         # Calculate positions for input and output ports
         right_x = rect.width() - PORT_RADIUS - PORT_OFFSET
