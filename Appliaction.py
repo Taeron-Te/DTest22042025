@@ -17,6 +17,8 @@ import json
 import uuid
 import copy
 import functools
+import os
+
 # from parser import reader
 BLOCK_TYPES = [
     ("Starter", "Стартовый блок"),
@@ -2674,6 +2676,12 @@ def creater(bff:dict, bc:dict):
                                  bc[i['id']])
             case _:
                 print("def")
+
+
+directory = "generated"
+
+if not os.path.exists(directory):
+    os.makedirs(directory)
 
 app = QApplication(sys.argv)
 window = MainWindow()
